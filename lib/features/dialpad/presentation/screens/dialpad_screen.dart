@@ -132,36 +132,23 @@ class _DialpadScreenState extends ConsumerState<DialpadScreen> {
                 ],
               ),
               
-              // Spacer
-              const SizedBox(height: 60),
-              
-              // Dialed Number Display (always takes fixed space)
+              // Dialed Number Display - Large and prominent in center
               Container(
                 width: double.infinity,
-                height: 72, // Fixed height to maintain layout stability
-                margin: const EdgeInsets.only(bottom: 40),
-                child: _dialedNumber.isNotEmpty
-                    ? Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF8F9FA),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFFE9ECEF)),
-                        ),
-                        child: Center(
-                          child: Text(
-                            _dialedNumber,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black87,
-                              letterSpacing: 2.0,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      )
-                    : const SizedBox(), // Empty space when no number, but maintains height
+                height: 80,
+                margin: const EdgeInsets.symmetric(vertical: 20),
+                child: Center(
+                  child: Text(
+                    _dialedNumber.isEmpty ? '' : _dialedNumber,
+                    style: const TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.black87,
+                      letterSpacing: 1.0,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
               
               // Dialpad Grid
@@ -178,7 +165,7 @@ class _DialpadScreenState extends ConsumerState<DialpadScreen> {
                         _buildDialpadButton('3', 'DEF'),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     
                     // Row 2: 4, 5, 6
                     Row(
@@ -189,7 +176,7 @@ class _DialpadScreenState extends ConsumerState<DialpadScreen> {
                         _buildDialpadButton('6', 'MNO'),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     
                     // Row 3: 7, 8, 9
                     Row(
@@ -200,7 +187,7 @@ class _DialpadScreenState extends ConsumerState<DialpadScreen> {
                         _buildDialpadButton('9', 'WXYZ'),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     
                     // Row 4: *, 0, #
                     Row(
@@ -215,70 +202,67 @@ class _DialpadScreenState extends ConsumerState<DialpadScreen> {
                 ),
               ),
               
-              // Bottom Action Buttons
+              // Bottom Action Buttons - Call and Delete
               const SizedBox(height: 20),
-              SizedBox(
-                height: 72,
-                child: Stack(
-                  children: [
-                    // Call Button - always centered
-                    Center(
-                      child: Container(
-                        width: 72,
-                        height: 72,
-                        decoration: BoxDecoration(
-                          color: _dialedNumber.isNotEmpty 
-                              ? const Color(0xFF6B46C1) 
-                              : const Color(0xFFB0BEC5),
-                          shape: BoxShape.circle,
-                          boxShadow: _dialedNumber.isNotEmpty ? [
-                            BoxShadow(
-                              color: const Color(0xFF6B46C1).withValues(alpha: 0.3),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ] : null,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Call Button - large circular with gradient
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      gradient: _dialedNumber.isNotEmpty 
+                          ? const LinearGradient(
+                              colors: [Color(0xFF7C3AED), Color(0xFF8B5CF6)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            )
+                          : null,
+                      color: _dialedNumber.isEmpty ? const Color(0xFFCCCCCC) : null,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(40),
+                        onTap: _dialedNumber.isNotEmpty ? _onCallPressed : null,
+                        child: const Icon(
+                          Icons.call,
+                          color: Colors.white,
+                          size: 32,
                         ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(36),
-                            onTap: _dialedNumber.isNotEmpty ? _onCallPressed : null,
-                            child: const Icon(
-                              Icons.call,
-                              color: Colors.white,
-                              size: 28,
-                            ),
+                      ),
+                    ),
+                  ),
+                  
+                  // Delete Button - positioned to the right
+                  if (_dialedNumber.isNotEmpty) ...[
+                    const SizedBox(width: 32),
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF0F0F0),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: _onBackspacePressed,
+                          child: const Icon(
+                            Icons.close,
+                            color: Color(0xFF666666),
+                            size: 24,
                           ),
                         ),
                       ),
                     ),
-                    
-                    // Delete Button - positioned to the right, only visible when needed
-                    if (_dialedNumber.isNotEmpty)
-                      Positioned(
-                        right: 24,
-                        top: 12,
-                        child: SizedBox(
-                          width: 48,
-                          height: 48,
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(24),
-                              onTap: _onBackspacePressed,
-                              child: const Icon(
-                                Icons.backspace_outlined,
-                                color: Color(0xFF757575),
-                                size: 24,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
                   ],
-                ),
+                ],
               ),
+              
             ],
           ),
         ),
@@ -288,20 +272,16 @@ class _DialpadScreenState extends ConsumerState<DialpadScreen> {
 
   Widget _buildDialpadButton(String digit, String letters) {
     return Container(
-      width: 80,
-      height: 80,
+      width: 90,
+      height: 90,
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        color: const Color(0xFFF0F0F0),
         shape: BoxShape.circle,
-        border: Border.all(
-          color: const Color(0xFFE0E0E0),
-          width: 1,
-        ),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(45),
           onTap: () => _onDigitPressed(digit),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -309,8 +289,8 @@ class _DialpadScreenState extends ConsumerState<DialpadScreen> {
               Text(
                 digit,
                 style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 32,
+                  fontWeight: FontWeight.w400,
                   color: Colors.black87,
                 ),
               ),
@@ -318,9 +298,9 @@ class _DialpadScreenState extends ConsumerState<DialpadScreen> {
                 Text(
                   letters,
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.w400,
-                    color: Color(0xFF757575),
+                    color: Color(0xFF888888),
                     letterSpacing: 0.5,
                   ),
                 ),

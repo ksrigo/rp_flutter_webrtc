@@ -411,3 +411,14 @@ Content-Length: 0
 When testing I have no issue but with IOS, Websocket is getting closed. I can see this error in my opensips logs for Ios Invite: ERROR:proto_wss:ws_process: Made 4 read attempts but message is not complete yet - closing connection
 
 ---
+
+## When calling a number InCallScreen shows up and timer starts. We should only starts showing timer when call is answered/established. Prior to it we should show if call is connecting/trying/ringing before starts timer once answered.
+
+there is a small bug. Connecting and Ringing shows properly but once call is answered timer shows up but very quickly is replaced by Connecting text.
+I guess when state change timer is hidden by the state.
+
+---
+
+I have added an image in mockup/new_keypad.jpg. Bring same look to the current keypad
+
+---
